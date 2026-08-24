@@ -1,0 +1,14 @@
+{
+  "stage": "gold",
+  "rows_in": 1784676,
+  "rows_out": 2157912,
+  "quarantined": 0,
+  "duplicates_removed": 0,
+  "quarantine_rate": 0.0,
+  "reasons": {},
+  "contract_violations": [],
+  "active_zones": 123,
+  "zones_without_geometry": [
+    264
+  ]
+}

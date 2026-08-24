@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MPLBACKEND: Agg
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - run: ruff check src tests
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -e ".[serve,dev]"
+      - run: pytest -q --cov=urbanflow --cov-report=term-missing
+
+  pipeline-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[serve,dev]"
+      - name: Run the pipeline end to end on generated data
+        run: |
+          python -m urbanflow.cli all --source synthetic \
+            --set data.start_month=2024-10 \
+            --set data.end_month=2025-04 \
+            --set data.synthetic_trips_per_month=60000 \
+            --set geo.min_daily_trips=4 \
+            --set split.n_folds=2 \
+            --set split.test_days=7 \
+            --set split.validation_days=5 \
+            --set split.embargo_hours=336 \
+            --set conformal.calibration_days=7 \
+            --set causal.event_window_months=3 \
+            --set causal.min_weekly_trips=5 \
+            --set model.lgbm.n_estimators=120
+      - name: Check every expected figure was produced
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          results = json.loads(pathlib.Path("reports/results.json").read_text())
+          figures = results["figures"]
+          missing = [n for n, f in figures.items() if not pathlib.Path("reports/figures", f).exists()]
+          if missing:
+              sys.exit(f"missing figures: {missing}")
+          print(f"{len(figures)} figures produced")
+          print("test MAE", results["test"]["point"]["lightgbm"]["mae"])
+          assert results["causal"]["status"] == "ok", results["causal"]["status"]
+          assert results["rebalancing"]["sinkhorn_converged"]
+          PY
+      - name: Verify the API boots against the trained artifacts
+        run: |
+          python - <<'PY'
+          from fastapi.testclient import TestClient
+          from urbanflow.serving.api import app
+          client = TestClient(app)
+          health = client.get("/health")
+          assert health.status_code == 200, health.text
+          body = health.json()
+          assert body["status"] == "ok", body
+          print("health:", body)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pipeline-figures
+          path: reports/
+          retention-days: 7

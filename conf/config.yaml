@@ -1,0 +1,105 @@
+project:
+  name: urbanflow
+  random_seed: 20260823
+  num_threads: 0
+
+paths:
+  bronze: data/bronze
+  silver: data/silver
+  gold: data/gold
+  external: data/external
+  artifacts: artifacts
+  reports: reports
+  figures: reports/figures
+
+data:
+  start_month: "2024-01"
+  end_month: "2025-12"
+  service: yellow
+  tlc_base_url: "https://d37ci6vzurychx.cloudfront.net/trip-data"
+  misc_base_url: "https://d37ci6vzurychx.cloudfront.net/misc"
+  weather_url: "https://archive-api.open-meteo.com/v1/archive"
+  weather_lat: 40.7794
+  weather_lon: -73.9692
+  manual_drop_dir: raw_downloads
+  synthetic_trips_per_month: 420000
+
+quality:
+  min_trip_seconds: 30
+  max_trip_seconds: 21600
+  min_trip_miles: 0.05
+  max_trip_miles: 150.0
+  min_fare: 0.0
+  max_fare: 2000.0
+  max_passengers: 9
+  max_quarantine_rate: 0.15
+
+geo:
+  h3_resolution: 8
+  min_daily_trips: 5.0
+  laplacian_eigenvectors: 8
+
+features:
+  target: trips
+  lags_hours: [1, 2, 3, 24, 25, 48, 72, 168, 336]
+  rolling_windows_hours: [3, 24, 168]
+  fourier_terms:
+    daily: 3
+    weekly: 3
+    yearly: 2
+  spatial_diffusion_steps: [1, 2]
+
+split:
+  n_folds: 4
+  validation_days: 14
+  embargo_hours: 336
+  test_days: 28
+
+model:
+  lgbm:
+    objective: tweedie
+    tweedie_variance_power: 1.2
+    n_estimators: 900
+    learning_rate: 0.06
+    num_leaves: 96
+    max_bin: 127
+    min_child_samples: 40
+    subsample: 0.8
+    subsample_freq: 1
+    colsample_bytree: 0.8
+    reg_lambda: 1.0
+    early_stopping_rounds: 60
+  quantiles: [0.05, 0.25, 0.5, 0.75, 0.95]
+
+conformal:
+  alpha: 0.1
+  calibration_days: 21
+  mondrian_bins: 6
+
+optimize:
+  sinkhorn_epsilon: 0.05
+  sinkhorn_max_iter: 2000
+  sinkhorn_tol: 1.0e-9
+  service_radius_minutes: 25.0
+  idle_fleet_size: 2500
+  reposition_share: 0.25
+  arrival_horizon_minutes: 30.0
+  frontier_shares: [0.10, 0.15, 0.20, 0.25, 0.35, 0.50]
+  frontier_horizons: [20.0, 30.0, 45.0]
+
+causal:
+  treatment_start: "2025-01-05"
+  event_window_months: 6
+  cluster_by: zone
+  control_boroughs: ["Manhattan"]
+  min_weekly_trips: 200
+
+monitoring:
+  psi_warn: 0.10
+  psi_alert: 0.25
+  ks_alpha: 0.01
+
+serving:
+  host: "0.0.0.0"
+  port: 8000
+  model_stage: production

@@ -1,0 +1,24 @@
+services:
+  pipeline:
+    build: .
+    image: urbanflow:latest
+    command: ["python", "-m", "urbanflow.cli", "all", "--source", "auto"]
+    volumes:
+      - ./data:/app/data
+      - ./artifacts:/app/artifacts
+      - ./reports:/app/reports
+    environment:
+      URBANFLOW_PROJECT__RANDOM_SEED: "20260823"
+
+  api:
+    build: .
+    image: urbanflow:latest
+    depends_on:
+      pipeline:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./artifacts:/app/artifacts
+      - ./reports:/app/reports
