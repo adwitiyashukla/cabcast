@@ -7,18 +7,18 @@ optimal-transport rebalancing policy, packaged as a reproducible production ML s
 ![Python](https://img.shields.io/badge/python-3.10%20to%203.13-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Built on **89,892,322 real NYC yellow-taxi trips** (2024-01-15 to 2025-12-31), the official TLC taxi
+Built on 89,892,322 real NYC yellow-taxi trips (2024-01-15 to 2025-12-31), the official TLC taxi
 zone shapefile, and hourly Central Park weather.
 
 A dispatcher needs three answers, and a point forecast only gives the first:
 
 1. **How many pickups will each zone see next hour?** Gradient boosting over 91
-   engineered features cuts MAE **59.8%** against a seasonal-naive baseline.
+   engineered features cuts MAE 59.8% against a seasonal-naive baseline.
 2. **How wrong could that be?** Conformal prediction turns the forecast into an interval with a
    distribution-free finite-sample coverage guarantee, hitting 0.8994
    against a 90% target.
 3. **So what should the fleet do?** The forecast becomes the demand marginal of an entropic
-   optimal-transport problem, removing **46%** of unmet demand under
+   optimal-transport problem, removing 46% of unmet demand under
    a realistic repositioning budget.
 
 101 tests and an end-to-end pipeline run guard all of it in CI on four Python versions.
@@ -88,8 +88,8 @@ and Saturday, and airport zones follow flight banks rather than the commute.
 ![Zone adjacency graph](reports/figures/zone_network.png)
 
 Taxi zones form a planar adjacency graph, and two things computed from it become model features:
-**betweenness centrality**, which peaks on the bridge and tunnel zones that funnel traffic, and the
-**eigenvectors of the normalised graph Laplacian**, a continuous positional encoding of where a
+betweenness centrality, which peaks on the bridge and tunnel zones that funnel traffic, and the
+eigenvectors of the normalised graph Laplacian, a continuous positional encoding of where a
 zone sits in the city. The leading non-trivial eigenvector splits the city geographically without
 ever being shown a coordinate.
 
@@ -134,7 +134,7 @@ scored exactly once.
 | historical mean | 14.140 | 31.416 | 0.929 | -4.813 |
 | lightgbm | 6.118 | 12.860 | 0.402 | -0.586 |
 
-LightGBM cuts MAE **59.8%** against seasonal naive. MASE of
+LightGBM cuts MAE 59.8% against seasonal naive. MASE of
 0.402 means it beats a one-week-ago naive forecast by roughly a factor of
 two and a half on its own scale.
 
@@ -173,9 +173,9 @@ under-covers at 0.8943; conformalising it lands on
 finite samples, assuming only exchangeability.
 
 Winkler score is the column that separates the two conformal variants, because it charges for
-width as well as misses. Split conformal produces a **constant-width** interval and scores
-57.63. Mondrian CQR produces an **adaptive-width** interval and
-scores 38.78, **33% better**. A band that is narrow in
+width as well as misses. Split conformal produces a constant-width interval and scores
+57.63. Mondrian CQR produces an adaptive-width interval and
+scores 38.78, 33% better. A band that is narrow in
 quiet zones and wide in Midtown is worth far more to a dispatcher than one that is uniformly wide.
 
 ![Conditional coverage](reports/figures/conditional_coverage.png)
@@ -191,8 +191,8 @@ predicted-demand quintile:
 | Q4 | 32.9 | 0.8831 | 0.8956 |
 | Q5 | 167.7 | 0.8915 | 0.9027 |
 
-Coverage spread across quintiles is **0.0451** for a single global correction and
-**0.0168** once the correction is conditioned on the demand stratum, a
+Coverage spread across quintiles is 0.0451 for a single global correction and
+0.0168 once the correction is conditioned on the demand stratum, a
 63% reduction.
 
 ![Forecasts with intervals](reports/figures/forecast_intervals.png)
@@ -210,12 +210,12 @@ converging to a marginal error of 8.4e-10 in
 
 A raw transport plan satisfies the demand marginal by construction, so scoring it against demand
 would always report a perfect result. Two operational constraints make the number mean something:
-at most **25%** of the idle fleet may reposition, and only vehicles that
-can arrive within **30 minutes** count as supply.
+at most 25% of the idle fleet may reposition, and only vehicles that
+can arrive within 30 minutes count as supply.
 
 Under those constraints, at the peak forecast hour a 2,500 vehicle idle fleet
-cuts unmet demand from **607** to **326** trips, a
-**46.3% reduction**, spending
+cuts unmet demand from 607 to 326 trips, a
+46.3% reduction, spending
 18.6 vehicle-minutes per additional trip served.
 551 vehicles move and 59 are stranded by the
 arrival horizon.
@@ -268,7 +268,7 @@ New York switched on its Congestion Relief Zone on 5 January 2025. Zones inside 
 are treated; comparable Manhattan zones above 60th Street are the control. Difference-in-differences
 is the obvious tool, and it gives a clean, publishable-looking answer:
 
-> Congestion pricing reduced taxi trips in the charging zone by **-14.36%**
+> Congestion pricing reduced taxi trips in the charging zone by -14.36%
 > (95% CI -24.51% to -2.85%, p = 0.016).
 
 **That number is not trustworthy, and the pipeline says so.**
@@ -282,15 +282,15 @@ would have moved together. That is testable, and here it fails badly:
 | pre-trend slope | -0.95% per week |
 | pre-periods individually significant | 46% |
 
-Treated zones were already drifting away from controls at about 1% a week for six months **before
-the policy existed**. Re-estimating with zone-specific linear time trends, which absorb that drift:
+Treated zones were already drifting away from controls at about 1% a week for six months before
+the policy existed. Re-estimating with zone-specific linear time trends, which absorb that drift:
 
 | specification | estimate | 95% CI | p |
 |---|---|---|---|
 | two-way fixed effects | -14.36% | -24.51% to -2.85% | 0.016 |
 | plus zone-specific trends | +1.77% | -5.30% to +9.37% | 0.633 |
 
-The effect goes from large and significant to **indistinguishable from zero**. Almost all of the
+The effect goes from large and significant to indistinguishable from zero. Almost all of the
 apparent impact was the pre-existing divergence continuing through the treatment date.
 
 `run_congestion_pricing_study` computes the parallel-trends verdict on every run, refuses to label
@@ -302,7 +302,7 @@ The zone-trend design is rank deficient, so one collinear nuisance column is abs
 solver; the standard error on the treatment term remains finite and clustered by zone, which the
 pipeline checks explicitly rather than assuming.
 
-**A better design would be needed to answer this question**: a synthetic control built from a
+A better design would be needed to answer this question: a synthetic control built from a
 donor pool, or an approach that does not assume the two groups were on a common path. That is out
 of scope here. What is in scope is refusing to report a number the data does not support.
 
@@ -314,7 +314,7 @@ of scope here. What is in scope is refusing to report a number the data does not
 
 91 features are compared between the training reference window and
 the serving window using population stability index and a two-sample Kolmogorov-Smirnov test.
-17 sit at alert level, and **all of them are calendar or seasonal**:
+17 sit at alert level, and all of them are calendar or seasonal:
 `day_of_year`, `month`, `week_of_year` and the yearly Fourier terms necessarily drift when the
 serving window is a different season. That is expected drift, not model decay. The number that
 would gate a deployment is prediction drift, at PSI 0.1927
@@ -351,7 +351,7 @@ make all
 
 `make all` downloads the real TLC data, builds every layer, trains and back-tests, calibrates the
 intervals, solves the transport problem, runs the causal study and writes every figure. It falls
-back to a built-in generator when the network is unavailable, and **says so loudly** rather than
+back to a built-in generator when the network is unavailable, and says so loudly rather than
 silently substituting synthetic geometry.
 
 | command | what it does |
