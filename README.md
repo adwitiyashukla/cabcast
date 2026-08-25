@@ -21,9 +21,6 @@ A dispatcher needs three answers, and a point forecast only gives the first:
    optimal-transport problem, removing **46%** of unmet demand under
    a realistic repositioning budget.
 
-There is also a fourth answer, and it is the most interesting one: **a causal question this data
-cannot answer**, documented below rather than hidden.
-
 101 tests and an end-to-end pipeline run guard all of it in CI on four Python versions.
 
 ---
@@ -260,10 +257,6 @@ it as the regularisation shrinks.
 | `roll_max_3h` | 0.09% |
 | `spatial_lag1_hop2` | 0.09% |
 | `fourier_day_sin_1` | 0.08% |
-
-The weekly lag dominates, which is the honest answer for this target: taxi demand is
-overwhelmingly a weekly-periodic process. The engineered spatial and graph terms earn a small but
-non-zero share on top of it.
 
 ---
 
