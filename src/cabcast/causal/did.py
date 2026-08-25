@@ -31,7 +31,7 @@ class DiDResult:
     pretrend_p_value: float = float("nan")
     pretrend_slope_pct_per_period: float = float("nan")
     pretrend_significant_share: float = float("nan")
-    parallel_trends_holds: bool = True
+    parallel_trends_holds: bool = False
     robustness: dict = field(default_factory=dict)
     event_study: pd.DataFrame = field(default_factory=pd.DataFrame)
 
@@ -108,6 +108,12 @@ MIN_ZONES_PER_ARM = 3
 MIN_PERIODS = 6
 PRETREND_ALPHA = 0.05
 PRETREND_MAX_SIG_SHARE = 0.25
+PRETREND_KEYS = (
+    "parallel_trends_holds",
+    "pretrend_p_value",
+    "pretrend_slope_pct_per_period",
+    "pretrend_significant_share",
+)
 
 
 def _degenerate(agg: pd.DataFrame, reason: str) -> DiDResult:
@@ -183,7 +189,11 @@ def estimate_did(
         rank_deficient=deficient,
         standard_error_is_finite=se_finite,
     )
-    log_event(log, "DiD estimated", **result.to_dict())
+    log_event(
+        log,
+        "DiD estimated",
+        **{k: v for k, v in result.to_dict().items() if k not in PRETREND_KEYS},
+    )
     return result
 
 
@@ -273,18 +283,7 @@ def run_congestion_pricing_study(panel: pd.DataFrame, cfg) -> DiDResult:
             share_of_pre_periods_significant=round(result.pretrend_significant_share, 3),
         )
         adjusted = estimate_did(agg, zone_trends=True)
-        payload = {
-            k: v
-            for k, v in adjusted.to_dict().items()
-            if k
-            not in {
-                "event_study",
-                "parallel_trends_holds",
-                "pretrend_p_value",
-                "pretrend_slope_pct_per_period",
-                "pretrend_significant_share",
-            }
-        }
+        payload = {k: v for k, v in adjusted.to_dict().items() if k not in PRETREND_KEYS}
         result.robustness = {"twoway_fe_zone_trends": payload}
         log_event(log, "zone-trend adjusted estimate", **result.robustness["twoway_fe_zone_trends"])
     return result
