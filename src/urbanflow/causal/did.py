@@ -106,6 +106,8 @@ def build_did_panel(
 
 MIN_ZONES_PER_ARM = 3
 MIN_PERIODS = 6
+PRETREND_ALPHA = 0.05
+PRETREND_MAX_SIG_SHARE = 0.25
 
 
 def _degenerate(agg: pd.DataFrame, reason: str) -> DiDResult:
@@ -259,7 +261,7 @@ def run_congestion_pricing_study(panel: pd.DataFrame, cfg) -> DiDResult:
         float((pre["p_value"] < 0.05).mean()) if len(pre) else float("nan")
     )
     result.parallel_trends_holds = bool(
-        pretrend_p > 0.05 and abs(result.pretrend_slope_pct_per_period) < 0.5
+        pretrend_p > PRETREND_ALPHA and result.pretrend_significant_share < PRETREND_MAX_SIG_SHARE
     )
 
     if not result.parallel_trends_holds:
