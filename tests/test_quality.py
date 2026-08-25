@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from urbanflow.quality.contracts import (
+from cabcast.quality.contracts import (
     GOLD_PANEL,
     SILVER_TRIPS,
     ColumnSpec,

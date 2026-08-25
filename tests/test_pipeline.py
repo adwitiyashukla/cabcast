@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from urbanflow.cli import main
+from cabcast.cli import main
 
 pytestmark = pytest.mark.slow
 
@@ -27,7 +27,7 @@ TINY = [
 
 @pytest.fixture(scope="module")
 def pipeline_run(tmp_path_factory):
-    root = tmp_path_factory.mktemp("urbanflow_run")
+    root = tmp_path_factory.mktemp("cabcast_run")
     overrides = TINY + [
         f"paths.{name}={root / name}"
         for name in ("bronze", "silver", "gold", "external", "artifacts", "reports")

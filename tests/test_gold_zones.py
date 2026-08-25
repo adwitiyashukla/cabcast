@@ -4,7 +4,7 @@ import duckdb
 import pandas as pd
 import pytest
 
-from urbanflow.data.gold import _active_zones
+from cabcast.data.gold import _active_zones
 
 
 @pytest.fixture

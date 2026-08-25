@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from urbanflow.models.conformal import (
+from cabcast.models.conformal import (
     ConformalizedQuantile,
     MondrianConformalizedQuantile,
     SplitConformal,

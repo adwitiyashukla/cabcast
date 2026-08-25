@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 from scipy.sparse.csgraph import connected_components
 
-from urbanflow.geo.zones import (
+from cabcast.geo.zones import (
     BOROUGH_ZONE_COUNTS,
     N_ZONES,
     find_shapefile,
@@ -54,7 +54,7 @@ def test_travel_matrix_is_a_metric(graph):
 
 
 def test_eigenmaps_shape_and_determinism(zones, graph):
-    from urbanflow.geo.graph import build_zone_graph
+    from cabcast.geo.graph import build_zone_graph
 
     assert graph.eigenmaps.shape == (zones.n_zones, 6)
     again = build_zone_graph(zones, n_eigenvectors=6)
@@ -93,7 +93,7 @@ def test_missing_shapefile_returns_none(tmp_path):
 
 
 def test_fallback_to_synthetic_is_logged_loudly(cfg, caplog, monkeypatch, tmp_path):
-    monkeypatch.setattr("urbanflow.config.Config.path", lambda self, key: tmp_path)
+    monkeypatch.setattr("cabcast.config.Config.path", lambda self, key: tmp_path)
     with caplog.at_level("WARNING"):
         zones = get_zones(cfg, prefer_real=True)
     assert zones.source == "synthetic_voronoi"

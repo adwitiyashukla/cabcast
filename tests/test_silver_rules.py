@@ -3,7 +3,7 @@ from __future__ import annotations
 import duckdb
 import pytest
 
-from urbanflow.data.silver import REASON_SQL, reject_clause, substitute
+from cabcast.data.silver import REASON_SQL, reject_clause, substitute
 
 PARAMS = {
     "min_sec": 30,

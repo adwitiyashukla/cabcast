@@ -1,11 +1,11 @@
 PYTHON ?= python
-PKG := src/urbanflow
+PKG := src/cabcast
 
 .DEFAULT_GOAL := help
 .PHONY: help install data data-synthetic silver gold train report all serve test lint format docker clean
 
 help:
-	@echo "UrbanFlow"
+	@echo "CabCast"
 	@echo ""
 	@echo "  make install         install the package and dev dependencies"
 	@echo "  make all             run the whole pipeline end to end"
@@ -25,28 +25,28 @@ install:
 	$(PYTHON) -m pip install -e ".[serve,dev]"
 
 data:
-	$(PYTHON) -m urbanflow.cli ingest --source remote
+	$(PYTHON) -m cabcast.cli ingest --source remote
 
 data-synthetic:
-	$(PYTHON) -m urbanflow.cli ingest --source synthetic
+	$(PYTHON) -m cabcast.cli ingest --source synthetic
 
 silver:
-	$(PYTHON) -m urbanflow.cli silver
+	$(PYTHON) -m cabcast.cli silver
 
 gold:
-	$(PYTHON) -m urbanflow.cli gold
+	$(PYTHON) -m cabcast.cli gold
 
 train:
-	$(PYTHON) -m urbanflow.cli train
+	$(PYTHON) -m cabcast.cli train
 
 report:
-	$(PYTHON) -m urbanflow.cli report
+	$(PYTHON) -m cabcast.cli report
 
 all:
-	$(PYTHON) -m urbanflow.cli all
+	$(PYTHON) -m cabcast.cli all
 
 serve:
-	$(PYTHON) -m urbanflow.cli serve
+	$(PYTHON) -m cabcast.cli serve
 
 test:
 	$(PYTHON) -m pytest -q
@@ -58,7 +58,7 @@ format:
 	$(PYTHON) -m ruff format src tests
 
 docker:
-	docker build -t urbanflow:latest .
+	docker build -t cabcast:latest .
 
 clean:
 	rm -rf data/bronze/* data/silver/* data/gold/* data/external/* artifacts reports/figures/* reports/*.json reports/*.md reports/*.csv reports/*.parquet

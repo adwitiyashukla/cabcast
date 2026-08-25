@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from urbanflow.features.build import LEAKY, assert_no_leakage, build_features
+from cabcast.features.build import LEAKY, assert_no_leakage, build_features
 
 
 @pytest.fixture(scope="module")

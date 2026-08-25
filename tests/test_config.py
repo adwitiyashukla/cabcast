@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from urbanflow.config import ROOT, apply_dotted_overrides, load_config
+from cabcast.config import ROOT, apply_dotted_overrides, load_config
 
 
 def test_config_loads_expected_sections(cfg):

@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from urbanflow.evaluation.backtest import (
+from cabcast.evaluation.backtest import (
     assert_temporal_integrity,
     holdout_bounds,
     rolling_origin_folds,

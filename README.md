@@ -1,9 +1,9 @@
-# UrbanFlow
+# CabCast
 
 Zone-level demand forecasting for New York City taxis, with calibrated uncertainty and an
 optimal-transport rebalancing policy, packaged as a reproducible production ML system.
 
-[![CI](https://github.com/adwitiyashukla/urbanflow/actions/workflows/ci.yml/badge.svg)](https://github.com/adwitiyashukla/urbanflow/actions/workflows/ci.yml)
+[![CI](https://github.com/adwitiyashukla/cabcast/actions/workflows/ci.yml/badge.svg)](https://github.com/adwitiyashukla/cabcast/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20to%203.13-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -350,8 +350,8 @@ are loaded. Interactive docs at `localhost:8000/docs`.
 Python 3.10 or newer.
 
 ```
-git clone https://github.com/adwitiyashukla/urbanflow.git
-cd urbanflow
+git clone https://github.com/adwitiyashukla/cabcast.git
+cd cabcast
 pip install -e ".[serve,dev]"
 make all
 ```
@@ -368,14 +368,14 @@ silently substituting synthetic geometry.
 | `make gold` | build the zone-hour demand panel |
 | `make train` | train and back-test |
 | `make report` | regenerate every figure and results file |
-| `urbanflow report --reuse` | re-report from saved models without retraining |
+| `cabcast report --reuse` | re-report from saved models without retraining |
 | `make test` | run the test suite |
 | `make serve` | start the API on port 8000 |
 
 Any configuration value can be overridden without editing the file:
 
 ```
-python -m urbanflow.cli all --set model.lgbm.num_leaves=64 --set geo.min_daily_trips=25
+python -m cabcast.cli all --set model.lgbm.num_leaves=64 --set geo.min_daily_trips=25
 ```
 
 **Memory.** The pipeline holds one float32 matrix and takes zero-copy slices of it for every fold,
@@ -388,9 +388,9 @@ of the 8 GB-plus a naive pandas implementation needs.
 ## Layout
 
 ```
-urbanflow/
+cabcast/
   conf/config.yaml            every tunable in one file
-  src/urbanflow/
+  src/cabcast/
     config.py                 layered config with dotted overrides
     cli.py                    pipeline entry points
     data/                     bronze ingestion, silver cleaning, gold panel, offline generator

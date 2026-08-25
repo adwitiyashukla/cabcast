@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from urbanflow.optimize.rebalance import (
+from cabcast.optimize.rebalance import (
     build_cost_matrix,
     evaluate_rebalancing,
     exact_transport,

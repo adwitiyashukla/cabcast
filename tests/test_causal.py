@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from urbanflow.causal.did import (
+from cabcast.causal.did import (
     build_did_panel,
     estimate_did,
     event_study,

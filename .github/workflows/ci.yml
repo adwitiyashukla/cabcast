@@ -39,7 +39,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: pip install -e ".[serve,dev]"
-      - run: pytest -q --cov=urbanflow --cov-report=term-missing
+      - run: pytest -q --cov=cabcast --cov-report=term-missing
 
   pipeline-smoke:
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
       - run: pip install -e ".[serve,dev]"
       - name: Run the pipeline end to end on generated data
         run: |
-          python -m urbanflow.cli all --source synthetic \
+          python -m cabcast.cli all --source synthetic \
             --set data.start_month=2024-10 \
             --set data.end_month=2025-04 \
             --set data.synthetic_trips_per_month=60000 \
@@ -83,7 +83,7 @@ jobs:
         run: |
           python - <<'PY'
           from fastapi.testclient import TestClient
-          from urbanflow.serving.api import app
+          from cabcast.serving.api import app
           client = TestClient(app)
           health = client.get("/health")
           assert health.status_code == 200, health.text

@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from urbanflow.config import load_config
-from urbanflow.geo.graph import build_zone_graph
-from urbanflow.geo.zones import build_synthetic_zones
+from cabcast.config import load_config
+from cabcast.geo.graph import build_zone_graph
+from cabcast.geo.zones import build_synthetic_zones
 
 
 @pytest.fixture(scope="session")

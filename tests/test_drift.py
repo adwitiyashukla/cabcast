@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from urbanflow.monitoring.drift import (
+from cabcast.monitoring.drift import (
     feature_drift,
     population_stability_index,
     prediction_drift,
