@@ -30,3 +30,7 @@ htmlcov/
 Thumbs.db
 .vscode/
 .idea/
+reports/*.json
+reports/*.md
+reports/*.csv
+!reports/figures/
